@@ -7,16 +7,17 @@ from xblock.fields import Scope, Integer, String
 from xblock.fragment import Fragment
 
 
-class AudioXBlock(XBlock):
+class DisqusXBlock(XBlock):
     """
-    This XBlock will play an MP3 file as an HTML5 audio element. 
+    This XBlock will embed a Disqus forum.
     """
 
     # Fields are defined on the class.  You can access them in your code as
     # self.<fieldname>.
-    src = String(
+    shortname = String(
            scope = Scope.settings, 
-           help = "URL for MP3 file to play"
+           help = "URL for MP3 file to play",
+           default = 'edx'
         )
 
     def resource_string(self, path):
@@ -27,16 +28,15 @@ class AudioXBlock(XBlock):
     # TO-DO: change this view to display your data your own way.
     def student_view(self, context=None):
         """
-        The primary view of the AudioXBlock, shown to students
+        The primary view of the DisqusXBlock, shown to students
         when viewing courses.
         """
-        html = self.resource_string("static/html/audio.html")
-        print self.src
-        print html.format
-        frag = Fragment(html.format(src = self.src))
-        frag.add_css(self.resource_string("static/css/audio.css"))
-        frag.add_javascript(self.resource_string("static/js/src/audio.js"))
-        frag.initialize_js('AudioXBlock')
+        html = self.resource_string("static/html/disqus.html")
+        extras = '';
+        frag = Fragment(html.replace('SHORTNAME','makerphysics').replace('EXTRAS',extras))
+        frag.add_css(self.resource_string("static/css/disqus.css"))
+        frag.add_javascript(self.resource_string("static/js/src/disqus.js"))
+        frag.initialize_js('DisqusXBlock')
         print self.xml_text_content()
         return frag
 
@@ -46,11 +46,11 @@ class AudioXBlock(XBlock):
     def workbench_scenarios():
         """A canned scenario for display in the workbench."""
         return [
-            ("AudioXBlock",
+            ("DisqusXBlock",
              """<vertical_demo>
-                  <audio src="http://localhost/Ikea.mp3"> </audio>
-                  <audio src="http://localhost/skull.mp3"> </audio>
-                  <audio src="http://localhost/monkey.mp3"> </audio>
+                  <disqus src="http://localhost/Ikea.mp3"> </disqus>
+                  <disqus src="http://localhost/skull.mp3"> </disqus>
+                  <disqus src="http://localhost/monkey.mp3"> </disqus>
                 </vertical_demo>
              """),
         ]

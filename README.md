@@ -1,9 +1,9 @@
-AudioXBlock
+DisqusXBlock
 ===========
+This is an XBlock for embedding Disqus discussions. 
 
-This is a simple XBlock which will play audio files as an HTML5 audio
-element. If unavailable, it will fall back to an embed element.
+It's a prototype. It works, but it's missing lots of functionality.
 
 Usage: 
 
-    <audio src="http://server.tld/static/song.mp3" />
+    <disqus shortname='makerphysics' />
