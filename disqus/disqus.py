@@ -16,8 +16,26 @@ class DisqusXBlock(XBlock):
     # self.<fieldname>.
     shortname = String(
            scope = Scope.settings, 
-           help = "URL for MP3 file to play",
+           help = "Replace example with your forum shortname",
            default = 'edx'
+        )
+
+    identifier = String(
+           scope = Scope.settings, 
+           help = "A unique identifier for each page where Disqus is present. If disqus_identifier is undefined, the page's URL will be used.",
+           default = ''
+        )
+
+    title = String(
+           scope = Scope.settings, 
+           help = "A unique title for each page where Disqus is present",
+           default = ''
+        )
+
+    url = String(
+           scope = Scope.settings, 
+           help = "A unique URL for each page where Disqus is present",
+           default = ''
         )
 
     def resource_string(self, path):
@@ -33,11 +51,18 @@ class DisqusXBlock(XBlock):
         """
         html = self.resource_string("static/html/disqus.html")
         extras = '';
-        frag = Fragment(html.replace('SHORTNAME','makerphysics').replace('EXTRAS',extras))
+        for param in ['shortname', 'title', 'identifier', 'url']:
+            value = getattr(self, param)
+            print param, value
+            if value: 
+                extras += "var disqus_{PARAM} = '{VALUE}';".format(PARAM = param, VALUE = value);
+
+        print extras
+
+        frag = Fragment(html.replace('EXTRAS',extras))
         frag.add_css(self.resource_string("static/css/disqus.css"))
         frag.add_javascript(self.resource_string("static/js/src/disqus.js"))
         frag.initialize_js('DisqusXBlock')
-        print self.xml_text_content()
         return frag
 
     # TO-DO: change this to create the scenarios you'd like to see in the
@@ -48,9 +73,7 @@ class DisqusXBlock(XBlock):
         return [
             ("DisqusXBlock",
              """<vertical_demo>
-                  <disqus src="http://localhost/Ikea.mp3"> </disqus>
-                  <disqus src="http://localhost/skull.mp3"> </disqus>
-                  <disqus src="http://localhost/monkey.mp3"> </disqus>
+                  <disqus shortname="makerphysics"> </disqus>
                 </vertical_demo>
              """),
         ]
